@@ -15,7 +15,6 @@ def updateValue(new_value):
     # Make sure to write the new value into the global variable
     global trackbar_value
     trackbar_value = new_value
-    return
 
 # Create a named window and name it 'Output'
 cv2.namedWindow("Output")
