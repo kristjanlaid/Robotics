@@ -21,10 +21,10 @@ def updateValue_dkernel(new_value_dkernel):
     trackbar_value_dkernel = new_value_dkernel
     
 def updateValue_diterations(new_value_diterations):
-    global trackbar_value_dterations
+    global trackbar_value_diterations
     trackbar_value_diterations = new_value_diterations
 
-cv2.createTrackbar('ekernel', 'Original', trackbar_value_kernel, 10, updateValue_kernel)
+cv2.createTrackbar('kernel', 'Original', trackbar_value_kernel, 10, updateValue_kernel)
 cv2.createTrackbar('iterations', 'Original', trackbar_value_iterations, 10, updateValue_iterations)
 cv2.createTrackbar('dkernel', 'Original', trackbar_value_dkernel, 10, updateValue_dkernel)
 cv2.createTrackbar('diterations', 'Original', trackbar_value_diterations, 10, updateValue_diterations)
