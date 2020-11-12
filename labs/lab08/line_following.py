@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
             print("LS1: ", ls1, "LS2: ", ls2, "LS3: ", ls3, "LS4: ", ls4, "LS5: ", ls5)
 
-            markers_count = (ls1, on_marker, markers_count)
+            markers_count = markers_detected(ls1, on_marker, markers_count)
             follow(robot, ls1, ls2, ls3, ls4, ls5)
 
         if not ser.is_open:
