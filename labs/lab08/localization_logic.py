@@ -163,5 +163,5 @@ if __name__ == "__main__":
     timer.start()
 
     while running:
-        pass
+        time.sleep(1)
     close()
