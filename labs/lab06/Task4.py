@@ -5,7 +5,7 @@ import time
 import os.path
 from os import path
 
-myRobot = go.EasyGoPiGo3
+myRobot = go.EasyGoPiGo3()
 myRobot.set_speed(50)
 
 trackbar_value_lH = 0
@@ -81,7 +81,7 @@ while True:
     ret, frame = cap.read()
     crop = frame[200:285]
    
-    Gaussian_blur = cv2.GausianBlur(crop, (5, 5), 0)
+    Gaussian_blur = cv2.GaussianBlur(crop, (5, 5), 0)
     HSV = cv2.cvtColor(Gaussian_blur, cv2.COLOR_BGR2HSV)
     lowerLimits = np.array([trackbar_value_lH, trackbar_value_lS, trackbar_value_lV])
     upperLimits = np.array([trackbar_value_hH, trackbar_value_hS, trackbar_value_hV])
