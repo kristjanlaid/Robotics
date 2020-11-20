@@ -114,10 +114,6 @@ while True:
         myRobot.spin_right
         if left_pillar < 100 or right_pillar > 550:
             myRobot.forward()
-            if left_pillar >= 550:
-                myRobot.turn_degrees(90)
-            elif right_pillar <= 100:
-                myRobot.turn_degrees(-90)
           
     else:
         myRobot.spin_right()
