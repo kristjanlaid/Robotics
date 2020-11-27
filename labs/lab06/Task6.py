@@ -6,7 +6,7 @@ import os.path
 from os import path
 
 myRobot = go.EasyGoPiGo3()
-myRobot.set_speed(25)
+myRobot.set_speed(30)
 
 
 trackbar_value_lH = 0
@@ -76,7 +76,14 @@ blobparams.filterByColor = False
 blobparams.blobColor = 255
 detector = cv2.SimpleBlobDetector_create(blobparams)
 
-number = 0
+finding_state = 'finding keypoints'
+driving_state_left = 'driving from the left'
+driving_state_right = 'driving from the right'
+localising_state = 'localising'
+finish_state = 'Between the pillars'
+current_state = 'finding keypoints'
+
+        
 
 while True:
     ret, frame = cap.read()
@@ -95,28 +102,83 @@ while True:
         x = int(keypoint.pt[0])
         y = int(keypoint.pt[1])
         cv2.putText(crop, (str("x: ") + str(x)), (x + 50, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
-        number = x
-        print(number)
+    if len(keypoints) == 2:
+        if keypoints[0].pt[0] > keypoints[1].pt[0]:
+            right_pillar = keypoints[0].pt[0]
+            left_pillar = keypoints[1].pt[0]
+            left_pillar_size = keypoints[1].size
+            right_pillar_size = keypoints[0].size
+        else:
+            left_pillar = keypoints[0].pt[0]
+            right_pillar = keypoints[1].pt[0]
+            left_pillar_size = keypoints[0].size
+            right_pillar_size = keypoints[1].size
     image = cv2.drawKeypoints(Gaussian_blur, keypoints, np.array([]), (0,255,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     
     cv2.imshow('Original', image)
     cv2.imshow('Thresholded', thresholded)
     
-    
-    
-    if len(keypoints) == 2:
-        if keypoints[0].pt[0] > keypoints[1].pt[0]:
-            right_pillar = keypoints[0].pt[0]
-            left_pillar = keypoints[1].pt[0]
+    if current_state == "finding keypoints":
+        if len(keypoints) == 2:
+            midpoint = (left_pillar + right_pillar) / 2
+            if midpoint >= 300 and midpoint <= 340:
+                myRobot.stop()
+                print(midpoint)
+                current_state = "localising"
+            
         else:
-            left_pillar = keypoints[0].pt[0]
-            right_pillar = keypoints[1].pt[0]
-        myRobot.spin_right
-        if left_pillar < 100 or right_pillar > 550:
-            myRobot.forward()
-          
-    else:
-        myRobot.spin_right()
+            myRobot.spin_right()
+               
+    elif current_state == "localising":
+        if left_pillar_size > right_pillar_size:
+            print('we are on the left side')
+            current_state = 'driving from the left'
+            myRobot.stop()
+        elif right_pillar_size > left_pillar_size:
+            print('We are on the right side')
+            current_state = 'driving from the right'
+            myRobot.stop()
+        
+        else:
+            current_state = "finding keypoints"
+            
+        
+    elif current_state == "driving from the left":
+        myRobot.turn_degrees(60, blocking=True)
+        myRobot.set_speed(200)
+        myRobot.drive_cm(60)
+        myRobot.turn_degrees(-90, blocking=True)
+        current_state = "Driving toward pillars"
+        
+    elif current_state == "driving from the right":
+        myRobot.turn_degrees(-60, blocking=True)
+        myRobot.set_speed(200)
+        myRobot.drive_cm(60)
+        myRobot.turn_degrees(90, blocking=True)
+        current_state = "Driving toward pillars"
+        
+    
+    elif current_state == 'Driving toward pillars':
+        midpoint = (left_pillar + right_pillar) / 2
+        print(midpoint)
+        if midpoint >= 300 and midpoint <= 340:
+            myRobot.stop()
+            myRobot.drive_cm(100)
+        else:
+            myRobot.spin_right()
+    
+    elif current_state == "Between the pillars": 
+        myRobot.drive_cm(30)
+    
+    print(current_state)
+    
+    
+    
+        
+        
+    
+
+    
 
 
     
