@@ -161,16 +161,6 @@ while True:
         myRobot.turn_degrees(60, blocking=True)
         current_state = "finding keypoints"
         
-    elif current_state == "lokaliseerin uuesti":
-        if len(keypoints) == 2:
-            if midpoint >= 310 and midpoint <= 330:
-                myRobot.stop()
-                print(midpoint)
-                current_state = "Driving toward pillars"
-            else:
-                myRobot.spin_right()
-        
-    
     elif current_state == 'Driving toward pillars':
         print(midpoint)
         myRobot.set_speed(15)
