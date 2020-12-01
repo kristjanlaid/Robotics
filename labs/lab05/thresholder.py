@@ -58,12 +58,12 @@ cv2.createTrackbar("hV", "Original", trackbar_value_hV, 255, updateValue_hV)
 
 blobparams = cv2.SimpleBlobDetector_Params()
 blobparams.filterByArea = True
-blobparams.minArea = 2000
-blobparams.maxArea = 5000
+blobparams.minArea = 500
+blobparams.maxArea = 8000
 blobparams.filterByCircularity = False
 blobparams.filterByInertia = False
 blobparams.filterByConvexity = False
-blobparams.minDistBetweenBlobs = 200
+blobparams.minDistBetweenBlobs = 50
 blobparams.filterByColor = True
 blobparams.blobColor = 255
 detector = cv2.SimpleBlobDetector_create(blobparams)
