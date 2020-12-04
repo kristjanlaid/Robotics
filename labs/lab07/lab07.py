@@ -12,6 +12,7 @@ from os import path
 gospeed = 450
 myRobot = go.EasyGoPiGo3()
 
+
 trackbar_value_lH = 0
 trackbar_value_lS = 0
 trackbar_value_lV = 0
@@ -76,7 +77,7 @@ def init():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
-    my_robot.set_speed(gospeed)
+    #my_robot.set_speed(gospeed)
     return
 
 
@@ -87,7 +88,10 @@ def get_line_location(thresholded):
     # Feel free to define and use any global variables you may need.
     # YOUR CODE HERE
     arrays = np.nonzero(thresholded)
-    return np.mean(arrays[1])
+    mean = np.mean(arrays[1])
+    if np.isnan(mean):
+        return 640
+    return mean
 
 
 # TASK 2
@@ -119,7 +123,13 @@ def proportional_controller(linelocation):
     # This function should use the line location to implement a proportional controller.
     # Feel free to define and use any global variables you may need.
     # YOUR CODE HERE
-
+    global left_wheel_speed, right_wheel_speed
+    e = 640 - linelocation
+    Kp = 1.8
+    P_out = Kp * e
+    myRobot.set_motor_dps(myRobot.MOTOR_LEFT, gospeed - P_out)
+    myRobot.set_motor_dps(myRobot.MOTOR_RIGHT, gospeed + P_out)
+    
     return
 
 
@@ -151,13 +161,15 @@ try:
         linelocation = get_line_location(thresholded)
         print(linelocation)
         # Task 2: uncomment the following line and implement bang_bang function.
-        #bang_bang(linelocation)
+        # bang_bang(linelocation)
 
         # Task 3: uncomment the following line and implement bang_bang_improved function.
-        bang_bang_improved(linelocation)
+        # bang_bang_improved(linelocation)
 
         # Task 4: uncomment the following line and implement proportional_controller function.
-        # proportional_controller(linelocation)
+        
+        proportional_controller(linelocation)
+        
 
         # Task 5: uncomment the following line and implement pid_controller function.
         # pid_controller(linelocation)
