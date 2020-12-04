@@ -9,7 +9,7 @@ import os.path
 from os import path
 
 # Global variable for determining GoPiGo speed.
-gospeed = 200
+gospeed = 450
 myRobot = go.EasyGoPiGo3()
 
 trackbar_value_lH = 0
@@ -105,14 +105,13 @@ def bang_bang(linelocation):
 def bang_bang_improved(linelocation):
     # This function should use the line location to implement an improved version of the bang-bang controller.
     # YOUR CODE HERE
-    if linelocation < 680 and linelocation > 600:
+    if linelocation < 800 and linelocation > 480:
         myRobot.forward()
-    elif linelocation < 600:
-        myRobot.right()
-    elif linelocation > 680:
+    elif linelocation <= 480:
         myRobot.left()
+    else:
+        myRobot.right()
     return linelocation
-    return
 
 
 # TASK 4
@@ -152,10 +151,10 @@ try:
         linelocation = get_line_location(thresholded)
         print(linelocation)
         # Task 2: uncomment the following line and implement bang_bang function.
-        bang_bang(linelocation)
+        #bang_bang(linelocation)
 
         # Task 3: uncomment the following line and implement bang_bang_improved function.
-        # bang_bang_improved(linelocation)
+        bang_bang_improved(linelocation)
 
         # Task 4: uncomment the following line and implement proportional_controller function.
         # proportional_controller(linelocation)
