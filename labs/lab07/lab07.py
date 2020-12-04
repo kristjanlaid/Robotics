@@ -10,6 +10,7 @@ from os import path
 
 # Global variable for determining GoPiGo speed.
 gospeed = 200
+myRobot = go.EasyGoPiGo3()
 
 trackbar_value_lH = 0
 trackbar_value_lS = 0
@@ -85,7 +86,6 @@ def get_line_location(thresholded):
     # It should return the location of the line in the frame.
     # Feel free to define and use any global variables you may need.
     # YOUR CODE HERE
-    
     arrays = np.nonzero(thresholded)
     return np.mean(arrays[1])
 
@@ -94,15 +94,24 @@ def get_line_location(thresholded):
 def bang_bang(linelocation):
     # This function should use the line location to implement a simple bang-bang controller.
     # YOUR CODE HERE
-
-    return
+    if linelocation < 640:
+        myRobot.left()
+    else:
+        myRobot.right()
+    return linelocation
 
 
 # TASK 3
 def bang_bang_improved(linelocation):
     # This function should use the line location to implement an improved version of the bang-bang controller.
     # YOUR CODE HERE
-
+    if linelocation < 680 and linelocation > 600:
+        myRobot.forward()
+    elif linelocation < 600:
+        myRobot.right()
+    elif linelocation > 680:
+        myRobot.left()
+    return linelocation
     return
 
 
@@ -137,15 +146,13 @@ try:
         lowerLimits = np.array([trackbar_value_lH, trackbar_value_lS, trackbar_value_lV])
         upperLimits = np.array([trackbar_value_hH, trackbar_value_hS, trackbar_value_hV])
         thresholded = cv2.inRange(HSV, lowerLimits, upperLimits)
-        thresholded = cv2.bitwise_not(thresholded)
-        thresholded = cv2.rectangle(thresholded, (0, 0), (width-1, height -1), (255, 255, 255), 2)
         cv2.imshow('Thresholded', thresholded)
         
         # Task 1: uncomment the following line and implement get_line_location function.
         linelocation = get_line_location(thresholded)
         print(linelocation)
         # Task 2: uncomment the following line and implement bang_bang function.
-        # bang_bang(linelocation)
+        bang_bang(linelocation)
 
         # Task 3: uncomment the following line and implement bang_bang_improved function.
         # bang_bang_improved(linelocation)
