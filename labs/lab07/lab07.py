@@ -125,7 +125,7 @@ def proportional_controller(linelocation):
     # YOUR CODE HERE
     global left_wheel_speed, right_wheel_speed
     e = 640 - linelocation
-    Kp = 1.8
+    Kp = 1.2
     P_out = Kp * e
     myRobot.set_motor_dps(myRobot.MOTOR_LEFT, gospeed - P_out)
     myRobot.set_motor_dps(myRobot.MOTOR_RIGHT, gospeed + P_out)
