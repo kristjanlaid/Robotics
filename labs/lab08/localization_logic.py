@@ -12,6 +12,7 @@ import read_sensors as sensors
 from visualisation import RepeatTimer
 import sys
 
+on_marker1 = False
 # Dictionary for holding positions
 positions = {'current_marker': 0, 'current_us': -1, 'current_enc': -1, 'current_cam': -1}
 
@@ -25,18 +26,21 @@ def fast_worker(running, robot, positions, ser, close_function):
     print("Starting fastWorker in a separate thread")
 
     # Distance from the START marker to the wall in mm
-    start_to_wall_dist = 1000
-
-    last_ls1 = -100
+    start_to_wall_dist = 1600
+    markers_count = 0
+    robot.reset_encoders(blocking=True)
+    last_ls1 = 1
     while running:
         arduino_data = sensors.get_data_from_arduino(ser)
-
+        
+        
         """
         TASK: Get the averaged encoder value and use it to
         find the distance from the wall in millimetres
         positions['current_enc'] = ...
         """
-
+        positions['current_enc'] = start_to_wall_dist - (round(robot.read_encoders_average(units='cm')) * 10)
+        positions['current_enc_improved'] = positions['current_enc']
         if arduino_data:
             ls1 = arduino_data['ls1']
             ls2 = arduino_data['ls2']
@@ -48,14 +52,16 @@ def fast_worker(running, robot, positions, ser, close_function):
             """
             TASK: save current ultrasonic position to positions dictionary
             """
-
+            positions['current_us'] = us_pos
             positions['current_marker'] = line.markers_detected(ls1, last_ls1, positions['current_marker'])
             line.follow(robot, ls1, ls2, ls3, ls4, ls5)
-
+            print(markers_count)
+            if positions['current_marker'] == 7:
+                robot.stop()
             """
             Add the rest of your line following & marker detection logic
             """
-
+            
         if not ser.is_open:
             close_function("Serial is closed!")
 
