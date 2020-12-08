@@ -7,12 +7,17 @@ import easygopigo3 as go
 import read_sensors as sensors
 import sys
 
-
+on_marker1 = False
 def follow(robot, ls1, ls2, ls3, ls4, ls5):
     """
     TASK: Code for following the line based on line sensor readings
     """
-
+    if ls3 == 0:
+        robot.forward()
+    elif ls5 == 0 or ls4 == 0:
+        robot.right()
+    elif ls1 == 0 or ls2 == 0:
+        robot.left()
     return
 
 
@@ -20,7 +25,27 @@ def markers_detected(ls1, on_marker, markers_count):
     """
     TASK: Code for detecting markers, update markers_count if needed
     """
-
+    global on_marker1
+    if on_marker1 == False and ls1 == 0:
+        on_marker1 = True
+        markers_count += 1
+    elif on_marker1 == True and ls1 == 1:
+        on_marker1 = False
+    if markers_count == 1:
+        print('Distance from wall', 180, 'cm')
+    elif markers_count == 2:
+        print('Distance from wall', 160, 'cm')
+    elif markers_count == 3:
+        print('Distance from wall', 138, 'cm')
+    elif markers_count == 4:
+        print('Distance from wall', 110, 'cm')
+    elif markers_count == 5:
+        print('Distance from wall', 70, 'cm')
+    elif markers_count == 6:
+        print('Distance from wall', 40, 'cm')
+    else:
+        print('Distance from wall', 20, 'cm')
+    
     return markers_count
 
 
@@ -53,7 +78,7 @@ if __name__ == "__main__":
 
     running, ser = sensors.initialize_serial('/dev/ttyUSB0')
 
-    markers_count = -100 # Change to correct value
+    markers_count = 0 # Change to correct value
     on_marker = False
     while running:
         arduino_data = sensors.get_data_from_arduino(ser)
@@ -68,7 +93,9 @@ if __name__ == "__main__":
 
             markers_count = markers_detected(ls1, on_marker, markers_count)
             follow(robot, ls1, ls2, ls3, ls4, ls5)
-
+            print(markers_count)
+            if markers_count == 7:
+                robot.stop()
         if not ser.is_open:
             close("Serial is closed!")
 
