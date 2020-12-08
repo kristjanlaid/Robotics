@@ -21,7 +21,7 @@ trackbar_value_hS = 125
 trackbar_value_hV = 125
 
 width = 1280
-height = 60
+height = 150
 
 if path.exists('trackbar_defaults.txt'):
     values = open('trackbar_defaults.txt', 'r')
@@ -132,13 +132,26 @@ def proportional_controller(linelocation):
     
     return
 
-
+error_sum = 0
+past_error = 0
 # TASK 5
 def pid_controller(linelocation):
     # This function should use the line location to implement a PID controller.
     # Feel free to define and use any global variables you may need.
     # YOUR CODE HERE
-
+    global error_sum, past_error
+    error = 640 - linelocation
+    Tu = 30 #Ossileeris sagedusega 30 kaadrit
+    Ku = 1.2
+    Kp = 0.6 * Ku
+    Ki = (1.2 * Ku) / Tu
+    Kd = (3 * Ku * Tu) / 40
+    error_sum += error
+    derivative = error - past_error
+    past_error = error
+    speed = (Kp * error) + (Kd * derivative) + (Ki * error_sum)
+    myRobot.set_motor_dps(myRobot.MOTOR_LEFT, gospeed - speed)
+    myRobot.set_motor_dps(myRobot.MOTOR_RIGHT, gospeed + speed)
     return
 
 
@@ -149,7 +162,7 @@ try:
     while True:
         # We read information from the camera.
         ret, frame = cap.read()
-        crop = frame[330:390]
+        crop = frame[250:400]
         #cv2.imshow('Original', frame)
         HSV = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
         lowerLimits = np.array([trackbar_value_lH, trackbar_value_lS, trackbar_value_lV])
@@ -159,7 +172,7 @@ try:
         
         # Task 1: uncomment the following line and implement get_line_location function.
         linelocation = get_line_location(thresholded)
-        print(linelocation)
+        # print(linelocation)
         # Task 2: uncomment the following line and implement bang_bang function.
         # bang_bang(linelocation)
 
@@ -168,11 +181,11 @@ try:
 
         # Task 4: uncomment the following line and implement proportional_controller function.
         
-        proportional_controller(linelocation)
+        # proportional_controller(linelocation)
         
 
         # Task 5: uncomment the following line and implement pid_controller function.
-        # pid_controller(linelocation)
+        pid_controller(linelocation)
         
         
         
