@@ -6,8 +6,8 @@ import numpy as np
 import scipy.optimize as opt
 
 # Fill the lists with your data
-X = [1, 2, 3, 4, 5, 6, 7] # Size [px]
-Y = [1, 2, 3, 4, 5, 6, 7] # Distance [mm]
+X = [40, 45, 60, 85, 140, 200, 250] # Size [px]
+Y = [1800, 1600, 1380, 1100, 700, 400, 200] # Distance [mm]
 
 
 def blob_size_to_distance(blob_size, a, b):
