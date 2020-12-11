@@ -28,6 +28,7 @@ def markers_detected(ls1, on_marker, markers_count):
     global on_marker1
     if on_marker1 == False and ls1 == 0:
         on_marker1 = True
+        
         markers_count += 1
     elif on_marker1 == True and ls1 == 1:
         on_marker1 = False
@@ -43,6 +44,8 @@ def markers_detected(ls1, on_marker, markers_count):
         print('Distance from wall', 70, 'cm')
     elif markers_count == 6:
         print('Distance from wall', 40, 'cm')
+    elif markers_count == 0:
+        print('Distance from wall', 0, 'cm')
     else:
         print('Distance from wall', 20, 'cm')
     
