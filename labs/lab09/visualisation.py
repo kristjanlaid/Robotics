@@ -90,10 +90,12 @@ class Visualisation:
             velocity_plot.setLabel('left', "Velocity (mm/s)")
             velocity_plot.setLabel('bottom', "Time (s)")
             velocity_plot.addLegend()
+            velocity_plot.setYRange(-200, 200)
+            self.velocity_plot = velocity_plot
 
             # Initialize velocity curves for each sensor
-            VEL_INIT_X = list(reversed([ -x*0.1 for x in range(50) ]))
-            VEL_INIT_Y = [0]*50
+            VEL_INIT_X = list(reversed([ -x*0.1 for x in range(100) ]))
+            VEL_INIT_Y = [0]*100
             if self.show_ultrasonic:
                 self.curve_us_vel = velocity_plot.plot(VEL_INIT_X[:], VEL_INIT_Y[:], pen=pg.mkPen(width=1, color='r'), name='Ultrasonic')
             if self.show_encoders:
@@ -209,44 +211,56 @@ class Visualisation:
     # Draws the velocity of the robot calculated from US measurements to the plot.
     def _draw_us_velocity(self, velocity):
         x, y = self.curve_us_vel.getData()
-        x = np.append(x[1:], time.time()-self.start_time)
-        y = np.append(y[1:], velocity)
+        newest_time = time.time() - self.start_time
+        x = np.append(x, newest_time)
+        y = np.append(y, velocity)
         self.curve_us_vel.setData(x, y)
+        self.velocity_plot.setXRange(newest_time-10, newest_time)
 
     # Draws the velocity of the robot calculated from encoder measurements to the plot.
     def _draw_enc_velocity(self, velocity):
         x, y = self.curve_enc_vel.getData()
-        x = np.append(x[1:], time.time()-self.start_time)
-        y = np.append(y[1:], velocity)
+        newest_time = time.time() - self.start_time
+        x = np.append(x, newest_time)
+        y = np.append(y, velocity)
         self.curve_enc_vel.setData(x, y)
+        self.velocity_plot.setXRange(newest_time-10, newest_time)
 
     # Draws the velocity of the robot calculated from camera measurements to the plot.
     def _draw_cam_velocity(self, velocity):
         x, y = self.curve_cam_vel.getData()
-        x = np.append(x[1:], time.time()-self.start_time)
-        y = np.append(y[1:], velocity)
+        newest_time = time.time() - self.start_time
+        x = np.append(x, newest_time)
+        y = np.append(y, velocity)
         self.curve_cam_vel.setData(x, y)
+        self.velocity_plot.setXRange(newest_time-10, newest_time)
 
     # Draws the velocity of the robot calculated from US moving average measurements to the plot.
     def _draw_moving_avg_us_velocity(self, velocity):
         x, y = self.curve_ma_us_vel.getData()
-        x = np.append(x[1:], time.time()-self.start_time)
-        y = np.append(y[1:], velocity)
+        newest_time = time.time() - self.start_time
+        x = np.append(x, newest_time)
+        y = np.append(y, velocity)
         self.curve_ma_us_vel.setData(x, y)
+        self.velocity_plot.setXRange(newest_time-10, newest_time)
 
     # Draws the velocity of the robot calculated from complementary filtered results to the plot.
     def _draw_compl_velocity(self, velocity):
         x, y = self.curve_compl_vel.getData()
-        x = np.append(x[1:], time.time()-self.start_time)
-        y = np.append(y[1:], velocity)
+        newest_time = time.time() - self.start_time
+        x = np.append(x, newest_time)
+        y = np.append(y, velocity)
         self.curve_compl_vel.setData(x, y)
+        self.velocity_plot.setXRange(newest_time-10, newest_time)
 
     # Draws the velocity of the robot calculated from camera measurements to the plot.
     def _draw_kalman_velocity(self, velocity):
         x, y = self.curve_kalman_vel.getData()
-        x = np.append(x[1:], time.time()-self.start_time)
-        y = np.append(y[1:], velocity)
+        newest_time = time.time() - self.start_time
+        x = np.append(x, newest_time)
+        y = np.append(y, velocity)
         self.curve_kalman_vel.setData(x, y)
+        self.velocity_plot.setXRange(newest_time-10, newest_time)
 
     # Plots Gaussian with given mu, sigma and name
     def _plot_gaussian(self, gaussian, name):
