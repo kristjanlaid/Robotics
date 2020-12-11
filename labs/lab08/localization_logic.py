@@ -26,10 +26,11 @@ def fast_worker(running, robot, positions, ser, close_function):
     print("Starting fastWorker in a separate thread")
 
     # Distance from the START marker to the wall in mm
-    start_to_wall_dist = 1600
+    start_to_wall_dist = 1800
     markers_count = 0
     robot.reset_encoders(blocking=True)
     last_ls1 = 1
+    encoder_reset = False
     while running:
         arduino_data = sensors.get_data_from_arduino(ser)
         
@@ -48,20 +49,43 @@ def fast_worker(running, robot, positions, ser, close_function):
             ls4 = arduino_data['ls4']
             ls5 = arduino_data['ls5']
             us_pos = arduino_data['us']
-
+            
             """
             TASK: save current ultrasonic position to positions dictionary
             """
             positions['current_us'] = us_pos
             positions['current_marker'] = line.markers_detected(ls1, last_ls1, positions['current_marker'])
-            line.follow(robot, ls1, ls2, ls3, ls4, ls5)
-            print(markers_count)
+            #line.follow(robot, ls1, ls2, ls3, ls4, ls5)
+            if encoder_reset == False and ls1 == 0:
+                encoder_reset = True
+
+                robot.reset_encoders(blocking=True)
+            elif encoder_reset == True and ls1 == 1:
+                encoder_reset = False
+            print(positions["current_marker"])
             if positions['current_marker'] == 7:
                 robot.stop()
+                close_function("Robot is stopped.")
             """
             Add the rest of your line following & marker detection logic
             """
-            
+            if positions['current_marker'] == 1:
+                start_to_wall_dist = 1800
+            elif positions['current_marker'] == 2:
+                start_to_wall_dist = 1600
+            elif positions['current_marker'] == 3:
+                start_to_wall_dist = 1380
+            elif positions['current_marker'] == 4:
+                start_to_wall_dist = 1100
+            elif positions['current_marker'] == 5:
+                start_to_wall_dist = 700
+            elif positions['current_marker'] == 6:
+                start_to_wall_dist = 400
+            elif positions['current_marker'] == 0:
+                start_to_wall_dist = 1800
+            else:
+                start_to_wall_dist = 200
+            last_ls1 = ls1
         if not ser.is_open:
             close_function("Serial is closed!")
 
@@ -75,7 +99,23 @@ def detect_blobs(frame):
     """
     Image processing and blob detection logic
     """
-    keypoints = []
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    lowerLimits = np.array([8, 20, 136])
+    upperLimits = np.array([38, 76, 221])
+    thresholded = cv2.inRange(frame, lowerLimits, upperLimits)
+    thresholded = cv2.bitwise_not(thresholded)
+    blobparams = cv2.SimpleBlobDetector_Params()
+    blobparams.filterByArea = True
+    blobparams.minArea = 500
+    blobparams.maxArea = 5000
+    blobparams.filterByCircularity = True
+    blobparams.filterByInertia = False
+    blobparams.filterByConvexity = False
+    blobparams.minDistBetweenBlobs = 10
+    blobparams.filterByColor = False
+    blobparams.blobColor = 255
+    detector = cv2.SimpleBlobDetector_create(blobparams)
+    keypoints = detector.detect(thresholded)
 
     return keypoints
 
@@ -85,7 +125,12 @@ def get_blob_size(keypoints):
     Find the size of biggest keypoint
     """
     max_size = 0
-
+    for keypoint in keypoints:
+        keypoint.size
+        if keypoint.size > max_size:
+            max_size = keypoint.size
+    
+    print(max_size)
     return max_size
 
 
