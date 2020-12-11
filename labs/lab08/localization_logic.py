@@ -130,7 +130,6 @@ def get_blob_size(keypoints):
         if keypoint.size > max_size:
             max_size = keypoint.size
     
-    print(max_size)
     return max_size
 
 
@@ -138,6 +137,7 @@ def get_distance_with_cam(blob_size):
     """
     Calculate distance based on blob size
     """
+    
     return -1
 
 
@@ -155,7 +155,7 @@ def slow_worker():
     blob_size = get_blob_size(keypoints)
     positions['current_cam'] = get_distance_with_cam(blob_size)
 
-    print(positions)
+    
     image_with_keypoints = cv2.drawKeypoints(frame, keypoints, np.array([]), (0, 0, 255),
                                              cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     cv2.imshow("Camera image", image_with_keypoints)
