@@ -6,7 +6,7 @@ from velocity import Velocity
 ####################################
 # Lab09: code to continuously edit #
 ####################################
-TASK = 0 # Update this value in the beginning of each task!
+TASK = 1 # Update this value in the beginning of each task!
 
 
 # Pre-defined dictionaries
