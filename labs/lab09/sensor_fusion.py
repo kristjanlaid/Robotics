@@ -6,7 +6,7 @@ from velocity import Velocity
 ####################################
 # Lab09: code to continuously edit #
 ####################################
-TASK = 1 # Update this value in the beginning of each task!
+TASK = 2 # Update this value in the beginning of each task!
 
 
 # Pre-defined dictionaries
@@ -18,13 +18,21 @@ positions = {'current_marker': -1, 'current_us': -1, 'current_enc': -1, 'current
 velocities = Velocity({'us': 0, 'enc': 0, 'cam': 0,
                        'moving_avg_us': 0, 'complementary': 0, 'kalman': 0})
 
+pos_list = []
 
 ############################################
 # Task 2: Implement moving average filter  #
 ############################################
 def moving_average(pos):
     # Fill in the function.
-    return 0
+    pos_list.append(pos)
+    pos = sum(pos_list) / len(pos_list)
+    if len(pos_list) >= 100:
+        pos_list.pop(0)
+    velocities.update_velocity_for_sensor(pos, 'moving_avg_us')
+    positions['current_moving_avg_us'] = pos
+    print(len(pos_list))
+    return pos
 
 
 ############################################
@@ -92,7 +100,7 @@ kalman_filter = Kalman(None)
 def on_ultrasonic_measurement(us_pos):
     # Write code here that will perform actions
     # whenever the robot calculates a new ultrasonic-based location estimate
-
+    moving_average(us_pos)
     # Update the velocity calculated based on ultrasonic measurements
     velocities.update_velocity_for_sensor(us_pos, 'us')
 

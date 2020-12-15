@@ -25,7 +25,8 @@ def fast_worker(running, robot, positions, ser, close_function):
     """
 
     print("Starting fastWorker in a separate thread")
-
+    
+    pos_list = []
     # Distance from the START marker to the wall in mm
     start_to_wall_dist = 1800
     markers_count = 0
@@ -41,10 +42,11 @@ def fast_worker(running, robot, positions, ser, close_function):
         find the distance from the wall in millimetres
         positions['current_enc'] = ...
         """
-        enc_pos = start_to_wall_dist - (round(robot.read_encoders_average(units='cm')) * 10)
+        enc_pos = start_to_wall_dist - (robot.read_encoders_average(units='cm')) * 10
         positions['current_enc'] = enc_pos
         positions['current_enc_improved'] = positions['current_enc']
         fusion.on_encoder_measurement(enc_pos)
+#         print(enc_pos)
         if arduino_data:
             ls1 = arduino_data['ls1']
             ls2 = arduino_data['ls2']
@@ -52,17 +54,16 @@ def fast_worker(running, robot, positions, ser, close_function):
             ls4 = arduino_data['ls4']
             ls5 = arduino_data['ls5']
             us_pos = arduino_data['us']
-            
+            print(us_pos)
             """
             TASK: save current ultrasonic position to positions dictionary
             """
             positions['current_us'] = us_pos
-            fusion.on_ultrasonic_measurement(us_pos)
+            fusion.on_ultrasonic_measurement(us_pos) 
             positions['current_marker'] = line.markers_detected(ls1, last_ls1, positions['current_marker'])
-            line.follow(robot, ls1, ls2, ls3, ls4, ls5)
+#             line.follow(robot, ls1, ls2, ls3, ls4, ls5)
             if encoder_reset == False and ls1 == 0:
                 encoder_reset = True
-
                 robot.reset_encoders(blocking=True)
             elif encoder_reset == True and ls1 == 1:
                 encoder_reset = False
@@ -70,6 +71,7 @@ def fast_worker(running, robot, positions, ser, close_function):
             if positions['current_marker'] == 7:
                 robot.stop()
                 close_function("Robot is stopped.")
+            
             """
             Add the rest of your line following & marker detection logic
             """
