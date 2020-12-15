@@ -100,18 +100,20 @@ def detect_blobs(frame):
     Image processing and blob detection logic
     """
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    lowerLimits = np.array([8, 20, 136])
-    upperLimits = np.array([38, 76, 221])
+    lowerLimits = np.array([0, 0, 0])
+    upperLimits = np.array([90, 202, 226])
     thresholded = cv2.inRange(frame, lowerLimits, upperLimits)
+    thresholded = cv2.rectangle(thresholded, (0, 0), (720, 640), (255, 255, 255), 2)
     thresholded = cv2.bitwise_not(thresholded)
+    
     blobparams = cv2.SimpleBlobDetector_Params()
     blobparams.filterByArea = True
     blobparams.minArea = 500
-    blobparams.maxArea = 5000
+    blobparams.maxArea = 1000000
     blobparams.filterByCircularity = True
     blobparams.filterByInertia = False
     blobparams.filterByConvexity = False
-    blobparams.minDistBetweenBlobs = 10
+    blobparams.minDistBetweenBlobs = 100
     blobparams.filterByColor = False
     blobparams.blobColor = 255
     detector = cv2.SimpleBlobDetector_create(blobparams)
@@ -129,7 +131,7 @@ def get_blob_size(keypoints):
         keypoint.size
         if keypoint.size > max_size:
             max_size = keypoint.size
-    
+            print(max_size)
     return max_size
 
 
