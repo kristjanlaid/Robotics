@@ -55,14 +55,14 @@ def fast_worker(running, robot, positions, ser, close_function):
             """
             positions['current_us'] = us_pos
             positions['current_marker'] = line.markers_detected(ls1, last_ls1, positions['current_marker'])
-            #line.follow(robot, ls1, ls2, ls3, ls4, ls5)
+            line.follow(robot, ls1, ls2, ls3, ls4, ls5)
             if encoder_reset == False and ls1 == 0:
                 encoder_reset = True
 
                 robot.reset_encoders(blocking=True)
             elif encoder_reset == True and ls1 == 1:
                 encoder_reset = False
-            print(positions["current_marker"])
+#             print(positions["current_marker"])
             if positions['current_marker'] == 7:
                 robot.stop()
                 close_function("Robot is stopped.")
@@ -126,12 +126,12 @@ def get_blob_size(keypoints):
     """
     Find the size of biggest keypoint
     """
-    max_size = 0
+    max_size = -1
     for keypoint in keypoints:
         keypoint.size
         if keypoint.size > max_size:
             max_size = keypoint.size
-            print(max_size)
+            
     return max_size
 
 
@@ -139,8 +139,11 @@ def get_distance_with_cam(blob_size):
     """
     Calculate distance based on blob size
     """
-    
-    return -1
+    if blob_size == -1:
+        return -1
+    dist = 123622 / blob_size - 107
+    print(dist)
+    return dist
 
 
 def slow_worker():

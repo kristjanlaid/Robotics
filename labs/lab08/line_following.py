@@ -32,22 +32,22 @@ def markers_detected(ls1, on_marker, markers_count):
         markers_count += 1
     elif on_marker1 == True and ls1 == 1:
         on_marker1 = False
-    if markers_count == 1:
-        print('Distance from wall', 180, 'cm')
-    elif markers_count == 2:
-        print('Distance from wall', 160, 'cm')
-    elif markers_count == 3:
-        print('Distance from wall', 138, 'cm')
-    elif markers_count == 4:
-        print('Distance from wall', 110, 'cm')
-    elif markers_count == 5:
-        print('Distance from wall', 70, 'cm')
-    elif markers_count == 6:
-        print('Distance from wall', 40, 'cm')
-    elif markers_count == 0:
-        print('Distance from wall', 0, 'cm')
-    else:
-        print('Distance from wall', 20, 'cm')
+#     if markers_count == 1:
+#         print('Distance from wall', 180, 'cm')
+#     elif markers_count == 2:
+#         print('Distance from wall', 160, 'cm')
+#     elif markers_count == 3:
+#         print('Distance from wall', 138, 'cm')
+#     elif markers_count == 4:
+#         print('Distance from wall', 110, 'cm')
+#     elif markers_count == 5:
+#         print('Distance from wall', 70, 'cm')
+#     elif markers_count == 6:
+#         print('Distance from wall', 40, 'cm')
+#     elif markers_count == 0:
+#         print('Distance from wall', 0, 'cm')
+#     else:
+#         print('Distance from wall', 20, 'cm')
     
     return markers_count
 
