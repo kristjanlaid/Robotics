@@ -48,7 +48,7 @@ void loop()
 
 // Gets distance in mm from the ultrasonic sensor
 long get_US()
-{
+{   delay(20);
     // TASK: get distance with ultrasonic, read about pulseIn() arguments and figure out how to use ULTRASONIC_ECHO_TIMEOUT
     digitalWrite(trig_pin, HIGH);
     delayMicroseconds(10);
