@@ -34,7 +34,7 @@ void loop()
 {
     // Get distance from wall with ultrasonic sensor
     us = get_US();
-
+    
     // Read everything from serial
     if(Serial.available())
     {
@@ -48,10 +48,16 @@ void loop()
 
 // Gets distance in mm from the ultrasonic sensor
 long get_US()
-{
+{   delay(20);
     // TASK: get distance with ultrasonic, read about pulseIn() arguments and figure out how to use ULTRASONIC_ECHO_TIMEOUT
-    int distance_in_mm = 0;
-
+    digitalWrite(trig_pin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trig_pin, LOW);
+    delayMicroseconds(10);
+    
+    int duration = pulseIn(echo_pin, HIGH, ULTRASONIC_ECHO_TIMEOUT);
+    int distance_in_mm = (duration / 2) / 2.91;
+    
     return distance_in_mm;
 }
 

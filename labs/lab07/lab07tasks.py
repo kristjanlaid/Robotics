@@ -22,11 +22,11 @@ def init():
     # Among other things it should open the camera and set GoPiGo speed.
     # Some of this has already been filled in.
     # You are welcome to add your own code if needed.
-
+    
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-
+    
     my_robot.set_speed(gospeed)
     return
 
@@ -37,9 +37,9 @@ def get_line_location(frame):
     # It should return the location of the line in the frame.
     # Feel free to define and use any global variables you may need.
     # YOUR CODE HERE
-
-    return 0
-
+    img = cap.read(cv2.IMREAD_GRAYSCALE)
+    horizontal = np.nonzero(img)
+    return np.mean(horizontal)
 
 # TASK 2
 def bang_bang(linelocation):
@@ -83,9 +83,9 @@ try:
         # We read information from the camera.
         ret, frame = cap.read()
         cv2.imshow('Original', frame)
-
+        
         # Task 1: uncomment the following line and implement get_line_location function.
-        # linelocation = get_line_location(frame)
+        linelocation = get_line_location(frame)
 
         # Task 2: uncomment the following line and implement bang_bang function.
         # bang_bang(linelocation)

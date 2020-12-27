@@ -6,8 +6,8 @@ import numpy as np
 import scipy.optimize as opt
 
 # Fill the lists with your data
-X = [1, 2, 3, 4, 5, 6, 7] # Size [px]
-Y = [1, 2, 3, 4, 5, 6, 7] # Distance [mm]
+X = [65, 72, 83, 102, 157, 245, 385] # Size [px]
+Y = [1800, 1600, 1380, 1100, 700, 400, 200] # Distance [mm]
 
 
 def blob_size_to_distance(blob_size, a, b):
@@ -15,7 +15,7 @@ def blob_size_to_distance(blob_size, a, b):
     TASK: The cost function which parameters we are looking for, replace with correct function
     """
 
-    dist = a * blob_size + b
+    dist = a / blob_size - b
 
     return dist
 

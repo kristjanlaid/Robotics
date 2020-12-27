@@ -65,9 +65,9 @@ def close(message=""):
 if __name__ == "__main__":
     # Register a callback for CTRL+C
     signal.signal(signal.SIGINT, signal_handler)
-
+    
     running, ser = sensors.initialize_serial('/dev/ttyUSB0')
-
+    positions['current_marker'] = 0
     robot = go.EasyGoPiGo3()
     robot.set_speed(60)
 

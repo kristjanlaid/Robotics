@@ -11,6 +11,7 @@ import numpy as np
 import read_sensors as sensors
 from visualisation import RepeatTimer
 import sys
+import sensor_fusion as fusion
 
 on_marker1 = False
 # Dictionary for holding positions
@@ -24,7 +25,8 @@ def fast_worker(running, robot, positions, ser, close_function):
     """
 
     print("Starting fastWorker in a separate thread")
-
+    
+    pos_list = []
     # Distance from the START marker to the wall in mm
     start_to_wall_dist = 1800
     markers_count = 0
@@ -40,8 +42,11 @@ def fast_worker(running, robot, positions, ser, close_function):
         find the distance from the wall in millimetres
         positions['current_enc'] = ...
         """
-        positions['current_enc'] = start_to_wall_dist - (round(robot.read_encoders_average(units='cm')) * 10)
+        enc_pos = start_to_wall_dist - (robot.read_encoders_average(units='cm')) * 10
+        positions['current_enc'] = enc_pos
         positions['current_enc_improved'] = positions['current_enc']
+        fusion.on_encoder_measurement(enc_pos)
+#         print(enc_pos)
         if arduino_data:
             ls1 = arduino_data['ls1']
             ls2 = arduino_data['ls2']
@@ -49,40 +54,43 @@ def fast_worker(running, robot, positions, ser, close_function):
             ls4 = arduino_data['ls4']
             ls5 = arduino_data['ls5']
             us_pos = arduino_data['us']
-            
+#             print(us_pos)
             """
             TASK: save current ultrasonic position to positions dictionary
             """
             positions['current_us'] = us_pos
+            fusion.on_ultrasonic_measurement(us_pos) 
             positions['current_marker'] = line.markers_detected(ls1, last_ls1, positions['current_marker'])
             line.follow(robot, ls1, ls2, ls3, ls4, ls5)
-            if encoder_reset == False and ls1 == 0:
-                encoder_reset = True
-                robot.reset_encoders(blocking=True)
-            elif encoder_reset == True and ls1 == 1:
-                encoder_reset = False
+#             if encoder_reset == False and ls1 == 0:
+#                 encoder_reset = True
+#                 robot.reset_encoders(blocking=True)
+#             elif encoder_reset == True and ls1 == 1:
+#                 encoder_reset = False
+#             print(positions["current_marker"])
             if positions['current_marker'] == 7:
                 robot.stop()
                 close_function("Robot is stopped.")
+            
             """
             Add the rest of your line following & marker detection logic
             """
-            if positions['current_marker'] == 1:
-                start_to_wall_dist = 1800
-            elif positions['current_marker'] == 2:
-                start_to_wall_dist = 1600
-            elif positions['current_marker'] == 3:
-                start_to_wall_dist = 1380
-            elif positions['current_marker'] == 4:
-                start_to_wall_dist = 1100
-            elif positions['current_marker'] == 5:
-                start_to_wall_dist = 700
-            elif positions['current_marker'] == 6:
-                start_to_wall_dist = 400
-            elif positions['current_marker'] == 0:
-                start_to_wall_dist = 1800
-            else:
-                start_to_wall_dist = 200
+#             if positions['current_marker'] == 1:
+#                 start_to_wall_dist = 1800
+#             elif positions['current_marker'] == 2:
+#                 start_to_wall_dist = 1600
+#             elif positions['current_marker'] == 3:
+#                 start_to_wall_dist = 1380
+#             elif positions['current_marker'] == 4:
+#                 start_to_wall_dist = 1100
+#             elif positions['current_marker'] == 5:
+#                 start_to_wall_dist = 700
+#             elif positions['current_marker'] == 6:
+#                 start_to_wall_dist = 400
+#             elif positions['current_marker'] == 0:
+#                 start_to_wall_dist = 1800
+#             else:
+#                 start_to_wall_dist = 200
             last_ls1 = ls1
         if not ser.is_open:
             close_function("Serial is closed!")
@@ -161,9 +169,9 @@ def slow_worker():
     
     image_with_keypoints = cv2.drawKeypoints(frame, keypoints, np.array([]), (0, 0, 255),
                                              cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-#     cv2.imshow("Camera image", image_with_keypoints)
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         close("Image closed")
+    cv2.imshow("Camera image", image_with_keypoints)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        close("Image closed")
 
 
 # This function will be called when CTRL+C is pressed

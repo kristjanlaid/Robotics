@@ -10,7 +10,8 @@ def calculate_velocity(position1, time1, position2, time2):
     # position1 is the position of the robot at time1
     # position2 is the position of the robot at time2
     # Fill in the function and return the correct value
-    return 0
+    velocity = (position2 - position1) / (time2 - time1)
+    return velocity
 
 
 class Velocity:
